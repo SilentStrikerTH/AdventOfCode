@@ -21,18 +21,19 @@ class Program {
 		// PART TWO:
 		
 		int possibleLoops = 0;
+		List<(int, int)> loops = new List<(int, int)>();
 		foreach ((int, int) testPositionYX in visited) {
 			List<string> testMapGrid = new List<string>(mapGrid);
 			testMapGrid[testPositionYX.Item1] = testMapGrid[testPositionYX.Item1]
 				.Remove(testPositionYX.Item2, 1)
 				.Insert(testPositionYX.Item2, "#");
 			if (GenPathTiles(facingDirection, positionYX, testMapGrid).Count == 0) {
+				loops.Add((testPositionYX.Item1, testPositionYX.Item2));
 				possibleLoops++;
 			}
 		}
 		
 		Console.WriteLine($"Part Two: {possibleLoops}");
-		
 	}
 
 	static char TurnRight(char facingDirection) {
@@ -67,6 +68,12 @@ class Program {
 				}
 				collisions.Add(collision);  // Part two
 				facingDirection = TurnRight(facingDirection);
+				// THIS WAS SO ANNOYING - There was a section where turning right and then moving forward would put
+				//  me on top of a #. I just needed to check again before moving forward! Wasted HOURS on this...
+				if (mapGrid[positionYX.Item1 + directionsYX[facingDirection].Item1][
+					    positionYX.Item2 + directionsYX[facingDirection].Item2] == '#') {
+					facingDirection = TurnRight(facingDirection);
+				}
 			}
 			// Move forward
 			positionYX = (positionYX.Item1 + directionsYX[facingDirection].Item1, positionYX.Item2 + directionsYX[facingDirection].Item2);
